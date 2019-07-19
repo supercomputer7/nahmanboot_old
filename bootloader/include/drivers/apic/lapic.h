@@ -1,0 +1,2 @@
+void disableLAPIC();
+void enableLAPIC();
