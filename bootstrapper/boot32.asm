@@ -4,11 +4,6 @@ start:
 
 cli
 
-mov eax,0x7fffffff 
-mov ebx,cr0
-and ebx,eax
-mov cr0,ebx ; disable paging just in case someone before this code enabled it (e.g. bootloader like SYSLINUX)
-
 ;; check memory map
 
 memory_detection:
@@ -54,11 +49,6 @@ mov es,ax
 
 popa
 ret
-
-
-
-
-
 
 error_a20line_msg db "Can't enable A20 line",0
 
