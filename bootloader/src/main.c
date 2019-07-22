@@ -3,6 +3,7 @@
 
 #include "drivers/acpi/powermodes.h"
 #include "drivers/apic/main.h"
+#include "drivers/pci/main.h"
 
 void welcome();
 void halt();
@@ -12,12 +13,11 @@ void main()
     welcome();
     prepare_interrupts(); // Disable LAPIC & PIC for a moment, install IDT & enable LAPIC
 
-    rebootACPI();
+    initPCIsubsystem(); // Initialize PCI & PCIe
 
-    //
+    //rebootACPI();
 
     // Reset HPET, LAPIC timer & RTC
-    // Initialize PCI & PCIe
     // Scan all disks
     // Scan all partitions in disks
     // Scan all filesystems
