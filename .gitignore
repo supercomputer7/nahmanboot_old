@@ -1,0 +1,11 @@
+# Ignore CMakeFiles
+bootloader/CMakeFiles/
+
+# Ignore binaires folder
+binaries/
+
+# Ignore .bin files
+.bin
+
+# Ignore snapshots
+snapshots/
