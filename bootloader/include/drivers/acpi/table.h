@@ -1,3 +1,6 @@
+#ifndef ACPITABLE_H
+#define ACPITABLE_H
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -139,7 +142,22 @@ struct FADT
 } __attribute__((__packed__));
 typedef struct FADT ACPIFADT;
 
+struct PCIConfigurationSpaceDescriptor
+{
+  uint64_t base_addr;
+  uint16_t pci_segment_number;
+  uint8_t pci_start_bus;
+  uint8_t pci_end_bus;
+  uint8_t Reserved[4];
+} __attribute__((__packed__));
+typedef struct PCIConfigurationSpaceDescriptor PCIeSpaceConfig;
 
+struct MCFG {
+  ACPITableHeader h;
+  uint8_t Reserved[8];
+  PCIeSpaceConfig spaces[];
+} __attribute__((__packed__));
+typedef struct MCFG ACPIMCFG;
 
 void initACPI_INFO();
 void *GetACPI_INFO();
@@ -151,3 +169,5 @@ bool ACPI_ValidateRebootSupport(ACPIFADT *fadt);
 bool ACPI_ValidateRSDP(RSDPDescriptor *rsdp);
 uint8_t ACPI_GetTableRevision(void *pointer);
 uint32_t ACPI_GetTableData(void *ptr,uint32_t offset);
+
+#endif
