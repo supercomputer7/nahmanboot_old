@@ -16,7 +16,6 @@ void PCIScan()
     }
     uint32_t *ptr = (uint32_t*)0x800;
     ptr[0] = (uint32_t)&pciTable;
-
     PCIenumeration();
 }
 
@@ -64,34 +63,45 @@ PCIRegisterValue ReadPCIeRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCI
     // PCIe using MCFG table
     ACPIMCFG *ptr = (ACPIMCFG*)pciTable.mcfg;
     PCIeSpaceConfig *space = (PCIeSpaceConfig*)&ptr->spaces[seg];
-    uint32_t addr = (uint32_t)NULL;
-    addr = (
-            (    
-            PCIeDeviceConfigSpaceSize * DevicesPerBus * FunctionsPerDevice * bus + 
-            PCIeDeviceConfigSpaceSize * FunctionsPerDevice * device + 
-            PCIeDeviceConfigSpaceSize * func + offset) >> 1 // divide by sizeof(uint16_t)
-        ); 
+    PCIAddress addr = CalcPCIeAddress(bus,device,func,offset);
     PCIRegisterValue *pcie_arr = (PCIRegisterValue*)(uint32_t)space->base_addr;
     return pcie_arr[addr];
 }
 PCIRegisterValue ReadPCIRegister(__attribute__((unused)) PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func, PCIOffsetSelector offset)
 {
-    uint32_t lbus  = (uint32_t)bus;
-    uint32_t ldevice = (uint32_t)device;
-    uint32_t lfunc = (uint32_t)func;
+    PCIAddress address = CalcPCIAddress(bus,device,func,offset);
     // Read using IO ports, legacy method
-    uint32_t address;
-    uint16_t tmp = 0;
- 
-    /* create configuration address as per Figure 1 */
-    address = (uint32_t)((lbus << 16) | (ldevice << 11) |
-        (lfunc << 8) | (offset & 0xfc) | ((uint32_t)0x80000000));
- 
+    uint16_t tmp;
     /* write out the address */
     outl(0xCF8, address);
     /* read in the data */
     tmp = (uint16_t)((inl(0xCFC) >> ((offset & 2) * 8)) & 0xffff);
     return (tmp);
+}
+
+
+PCIAddress CalcPCIeAddress(PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset)
+{
+    return ((
+             PCIeDeviceConfigSpaceSize * DevicesPerBus * FunctionsPerDevice * bus + 
+             PCIeDeviceConfigSpaceSize * FunctionsPerDevice * device + 
+             PCIeDeviceConfigSpaceSize * func + offset) >> 1 // divide by sizeof(uint16_t)
+            ); 
+}
+PCIAddress CalcPCIAddress(PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset)
+{
+    uint32_t lbus  = (uint32_t)bus;
+    uint32_t ldevice = (uint32_t)device;
+    uint32_t lfunc = (uint32_t)func;
+    uint8_t loffset = (uint8_t)(offset & 0xff);
+    
+    // Read using IO ports, legacy method
+    uint32_t address;
+    
+    /* create configuration address */
+    address = (uint32_t)((lbus << 16) | (ldevice << 11) |
+        (lfunc << 8) | (loffset & 0xfc) | ((uint32_t)0x80000000));   
+    return address;
 }
 
 
@@ -106,30 +116,15 @@ void WritePCIeRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction fu
         // PCIe using MCFG table
         ACPIMCFG *ptr = (ACPIMCFG*)pciTable.mcfg;
         PCIeSpaceConfig *space = (PCIeSpaceConfig*)&ptr->spaces[seg];
-        uint32_t addr = (uint32_t)NULL;
-        addr = (
-                (    
-                PCIeDeviceConfigSpaceSize * DevicesPerBus * FunctionsPerDevice * bus + 
-                PCIeDeviceConfigSpaceSize * FunctionsPerDevice * device + 
-                PCIeDeviceConfigSpaceSize * func + offset) >> 1 // divide by sizeof(uint16_t)
-            ); 
-        uint16_t *pcie_arr = (uint16_t*)(uint32_t)space->base_addr;
+        PCIAddress addr = CalcPCIeAddress(bus,device,func,offset);
+        PCIRegisterValue *pcie_arr = (PCIRegisterValue*)(uint32_t)space->base_addr;
         pcie_arr[addr] = value;    
     }
 }
 void WritePCIRegister(__attribute__((unused)) PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset,PCIRegisterValue value)
 {
-    uint32_t lbus  = (uint32_t)bus;
-    uint32_t ldevice = (uint32_t)device;
-    uint32_t lfunc = (uint32_t)func;
+    PCIAddress address = CalcPCIAddress(bus,device,func,offset);
     // Read using IO ports, legacy method
-    uint32_t address;
-    uint8_t loffset = (uint8_t)(offset & 0xff);
- 
-    /* create configuration address as per Figure 1 */
-    address = (uint32_t)((lbus << 16) | (ldevice << 11) |
-        (lfunc << 8) | (loffset & 0xfc) | ((uint32_t)0x80000000));
- 
     /* write out the address */
     outl(0xCF8, address);
     /* write in the data */
@@ -151,9 +146,6 @@ void PCIenumeration()
         seg_entries = (ptr->h.Length - sizeof(ptr->h))/sizeof(PCIeSpaceConfig);
     else
         seg_entries = 1; // no PCIe, using one segment
-
-
-        
 
     for(uint32_t seg=0; seg<seg_entries; ++seg)
     {

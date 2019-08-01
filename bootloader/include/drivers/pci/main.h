@@ -87,6 +87,8 @@ typedef uint8_t PCIFunction;
 typedef uint16_t PCIRegisterValue;
 typedef uint16_t PCIOffsetSelector;
 
+typedef uint32_t PCIAddress;
+
 
 struct pciSystemDescriptor {
     ACPIMCFG *mcfg;
@@ -110,6 +112,9 @@ void WritePCI(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOff
 
 void forcePCIMode();
 void forcePCIeMode();
+
+PCIAddress CalcPCIeAddress(PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset);
+PCIAddress CalcPCIAddress(PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset);
 
 PCIMode queryPCIMode();
 bool isPCIMode();
