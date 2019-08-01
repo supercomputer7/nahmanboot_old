@@ -42,6 +42,8 @@ set(KERNEL_SOURCE_FILES
         src/drivers/acpi/init.c
         src/drivers/acpi/powermodes.c
 
+        src/drivers/pci/main.c
+
         src/main.c)
 
 include_directories("lib/libc")
