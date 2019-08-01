@@ -13,9 +13,9 @@ void main()
     welcome();
     prepare_interrupts(); // Disable LAPIC & PIC for a moment, install IDT & enable LAPIC
 
-    initPCIsubsystem(); // Initialize PCI & PCIe
+    PCIScan(); // Initialize PCI & PCIe
 
-    //rebootACPI();
+    
 
     // Reset HPET, LAPIC timer & RTC
     // Scan all disks
@@ -24,6 +24,7 @@ void main()
     // Scan all devices, search for input devices
     // Show results to user
 
+    //rebootACPI();
     // halt!
     halt();
     
@@ -38,8 +39,8 @@ void welcome()
 }
 void halt()
 {
-    asm("cli");
-    asm("hlt");
+    asm("cli\n"
+        "hlt");
 }
 
 
