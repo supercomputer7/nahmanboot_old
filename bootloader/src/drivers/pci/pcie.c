@@ -1,4 +1,5 @@
 #include "drivers/pci/pcie.h"
+#include "drivers/pci/general.h"
 
 bool checkPCIeExisting()
 {
