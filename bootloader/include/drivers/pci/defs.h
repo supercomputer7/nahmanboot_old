@@ -189,8 +189,8 @@ typedef struct pciSystemDescriptor PCIDescriptor;
 struct pciSystemDescriptor {
     ACPIMCFG *mcfg;
     PCIMode pciMethod;
-    PCIRegisterValue (*readPCIreg)(PCIDescriptor* pciTable,PCISegment,PCIBus,PCIDevice,PCIFunction,PCIOffsetSelector);
-    void (*writePCIreg)(PCIDescriptor* pciTable,PCISegment,PCIBus,PCIDevice,PCIFunction,PCIOffsetSelector,PCIRegisterValue);
+    PCIRegisterValue (*readPCIreg)(PCIDescriptor*,PCISegment,PCIBus,PCIDevice,PCIFunction,PCIOffsetSelector);
+    void (*writePCIreg)(PCIDescriptor*,PCISegment,PCIBus,PCIDevice,PCIFunction,PCIOffsetSelector,PCIRegisterValue);
     uint32_t pci_devices_count;
     PCIDeviceDescriptor *devices;
 } __attribute__((__packed__));
