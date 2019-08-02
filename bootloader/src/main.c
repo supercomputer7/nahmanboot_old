@@ -13,7 +13,7 @@ void main()
     welcome();
     prepare_interrupts(); // Disable LAPIC & PIC for a moment, install IDT & enable LAPIC
 
-    PCIScan(); // Initialize PCI & PCIe
+    PCIScan(0x70000); // Initialize PCI & PCIe
 
     
 
