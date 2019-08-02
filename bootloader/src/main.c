@@ -14,8 +14,10 @@ void main()
 
     prepare_interrupts(); // Disable LAPIC & PIC for a moment, install IDT & enable LAPIC
 
-    PCIScan(0x70000); // Initialize PCI & PCIe
+    PCIDescriptor pciDesc;
 
+    PCIScan(&pciDesc,0x70000); // Initialize PCI & PCIe
+    
     
 
     // Reset HPET, LAPIC timer & RTC
