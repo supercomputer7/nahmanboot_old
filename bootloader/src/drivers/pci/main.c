@@ -3,7 +3,7 @@
 
 PCIDescriptor pciTable;
 
-void PCIScan()
+void PCIScan(uint32_t list_addr)
 {
     pciTable.mcfg = (ACPIMCFG*)GetACPITablePointer((void*)GetRSDP(), "MCFG");
     if(pciTable.mcfg == NULL)
@@ -16,8 +16,10 @@ void PCIScan()
     }
     uint32_t *ptr = (uint32_t*)0x800;
     ptr[0] = (uint32_t)&pciTable;
-    PCIenumeration();
+    PCIenumeration(list_addr);
 }
+
+// Abstracted PCI Subsystem Functions
 
 bool checkPCIeExisting()
 {
@@ -49,7 +51,7 @@ bool isPCIeMode()
     return queryPCIMode() == PCIExpressMode;
 }
 
-
+// Basic PCI Functions
 
 PCIRegisterValue ReadPCI(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func, PCIOffsetSelector offset)
 {
@@ -132,9 +134,9 @@ void WritePCIRegister(__attribute__((unused)) PCISegment seg,PCIBus bus,PCIDevic
 }
 
 
-void PCIenumeration()
+void PCIenumeration(uint32_t list_addr)
 {
-    pciTable.devices = (PCIDeviceDescriptor*)0x70000;
+    pciTable.devices = (PCIDeviceDescriptor*)(list_addr);
     pciTable.devices->uniq_id = 1;
     // Enumeration PCIe using MCFG table
 
@@ -160,8 +162,8 @@ void PCIenumeration()
                     if(ReadPCI(seg,bus,device,func,0) != 0xffff && ReadPCI(seg,bus,device,func,2) != 0xffff)
                     {
                         pciTable.devices[count_devices].uniq_id = count_devices;
-                        pciTable.devices[count_devices].vendor_id = ReadPCI(seg,bus,device,func,0);
-                        pciTable.devices[count_devices].device_id = ReadPCI(seg,bus,device,func,2);
+                        pciTable.devices[count_devices].vendor_id = getPCIVendorDevice(seg,bus,device,func);
+                        pciTable.devices[count_devices].device_id = getPCIDeviceID(seg,bus,device,func);
                         ++count_devices;
                         //pciTable.devices[count_devices]->
                     }
@@ -170,4 +172,91 @@ void PCIenumeration()
         }
     }
     pciTable.pci_devices_count = count_devices;
+}
+
+/// Functions for working with PCI Devices
+
+bool checkPCIDeviceType(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCI_CLASSCODE class_code, PCI_SUBCLASS subclass,PCI_PROGIF progif)
+{
+    return (
+            class_code == getPCIDeviceClassCode(seg,bus,device,func) &&
+            subclass == getPCIDeviceSubClass(seg,bus,device,func) &&
+            progif == getPCIDeviceProgIF(seg,bus,device,func)
+    );
+}
+
+PCI_REVISION_ID getPCIDeviceRevisionID(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (PCI_REVISION_ID)(ReadPCI(seg,bus,device,func,8) & 0xFF);
+}
+PCI_CLASSCODE getPCIDeviceClassCode(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (PCI_CLASSCODE)((ReadPCI(seg,bus,device,func,8) & 0xFF00) >> 2);
+}
+PCI_SUBCLASS getPCIDeviceSubClass(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (PCI_SUBCLASS)(ReadPCI(seg,bus,device,func,10) & 0xFF);
+}
+PCI_PROGIF getPCIDeviceProgIF(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (PCI_PROGIF)((ReadPCI(seg,bus,device,func,10) & 0xFF00) >> 2);
+}
+PCIHeaderType getPCIDeviceHeaderType(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (PCIHeaderType)(ReadPCI(seg,bus,device,func,14) & 0xFF);
+}
+
+PCIVendor getPCIVendorDevice(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (PCIVendor)ReadPCI(seg,bus,device,func,0);
+}
+PCIDeviceID getPCIDeviceID(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (PCIDeviceID)ReadPCI(seg,bus,device,func,2);
+}
+
+PCICommandReg getPCICommandRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (PCICommandReg)ReadPCI(seg,bus,device,func,4);
+}
+void setPCICommandRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func, PCIRegisterValue value)
+{
+    WritePCI(seg,bus,device,func,4,value);
+}
+
+bool isPCIDeviceInterruptEnabled(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (((uint16_t)getPCICommandRegister(seg,bus,device,func) & (1<<10)) >> 10) == 0;
+}
+
+void enablePCIDeviceInterrupt(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    setPCICommandRegister(seg,
+                          bus,
+                          device,
+                          func,
+                          (PCIRegisterValue)(getPCICommandRegister(seg,bus,device,func) & (~(1<<10)))
+                          );
+}
+void disablePCIDeviceInterrupt(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    setPCICommandRegister(seg,
+                          bus,
+                          device,
+                          func,
+                          (PCIRegisterValue)(getPCICommandRegister(seg,bus,device,func) & (1<<10))
+                          );
+}
+
+PCIStatusReg getPCIStatusRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (PCIStatusReg)ReadPCI(seg,bus,device,func,6);
+}
+bool isPCIDevice66MHzCapable(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (((uint16_t)getPCIStatusRegister(seg,bus,device,func) & (1<<5)) >> 5) == 1;
+}
+bool isPCIDeviceHasCapabilitiesList(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
+{
+    return (((uint16_t)getPCIStatusRegister(seg,bus,device,func) & (1<<4)) >> 4) == 1;
 }

@@ -11,17 +11,50 @@
 #define PCIExpressMode 2
 #define PCIconventionalMode 1
 
-struct PCIBasicHeader {
-    uint16_t vendor_id;
-    uint16_t device_id;
-    
-    uint16_t command;
-    uint16_t status;
+// Definitions for general use of subsystem
 
-    uint8_t revision;
-    uint8_t progif;
-    uint8_t subclass;
-    uint8_t class_code;
+typedef uint16_t PCIMode;
+
+// Definitions for Device enumeration
+
+typedef uint16_t PCISegment;
+typedef uint8_t PCIBus;
+typedef uint8_t PCIDevice;
+typedef uint8_t PCIFunction;
+
+typedef uint16_t PCIRegisterValue;
+typedef uint16_t PCIOffsetSelector;
+
+typedef uint32_t PCIAddress;
+
+// Definitions for Device identification
+
+typedef uint16_t PCIVendor;
+typedef uint16_t PCIDeviceID;
+
+typedef uint8_t PCIHeaderType;
+
+typedef uint8_t PCI_PROGIF;
+typedef uint8_t PCI_CLASSCODE;
+typedef uint8_t PCI_SUBCLASS;
+typedef uint8_t PCI_REVISION_ID;
+
+typedef uint16_t PCICommandReg;
+typedef uint16_t PCIStatusReg;
+
+typedef uint32_t PCI_BAR_REGISTER;
+
+struct PCIBasicHeader {
+    PCIVendor vendor_id;
+    PCIDeviceID device_id;
+    
+    PCICommandReg command;
+    PCIStatusReg status;
+
+    PCI_REVISION_ID revision;
+    PCI_PROGIF progif;
+    PCI_SUBCLASS subclass;
+    PCI_CLASSCODE class_code;
 
     uint8_t cache_line_size;
     uint8_t latency_timer;
@@ -33,12 +66,12 @@ typedef struct PCIBasicHeader PCIBasicHeader;
 struct PCIHeaderType0 {
     PCIBasicHeader h;
 
-    uint32_t bar0;
-    uint32_t bar1;
-    uint32_t bar2;
-    uint32_t bar3;
-    uint32_t bar4;
-    uint32_t bar5;
+    PCI_BAR_REGISTER bar0;
+    PCI_BAR_REGISTER bar1;
+    PCI_BAR_REGISTER bar2;
+    PCI_BAR_REGISTER bar3;
+    PCI_BAR_REGISTER bar4;
+    PCI_BAR_REGISTER bar5;
     uint32_t cardbus_cis_ptr;
 
     uint16_t subsystem_vendor_id;
@@ -139,28 +172,18 @@ struct PCIDeviceDescriptor {
     uint8_t device_number;
     uint8_t function_number;
 
-    uint16_t vendor_id;
-    uint16_t device_id;
+    PCIVendor vendor_id;
+    PCIDeviceID device_id;
 
-    uint8_t class_code;
-    uint8_t subclass;
-    uint8_t progif;
-    uint8_t revision;
+    PCI_CLASSCODE class_code;
+    PCI_SUBCLASS subclass;
+    PCI_PROGIF progif;
+    PCI_REVISION_ID revision;
 
 } __attribute__((__packed__));
 typedef struct PCIDeviceDescriptor PCIDeviceDescriptor;
 
-typedef uint16_t PCIMode;
 
-typedef uint16_t PCISegment;
-typedef uint8_t PCIBus;
-typedef uint8_t PCIDevice;
-typedef uint8_t PCIFunction;
-
-typedef uint16_t PCIRegisterValue;
-typedef uint16_t PCIOffsetSelector;
-
-typedef uint32_t PCIAddress;
 
 
 struct pciSystemDescriptor {
@@ -173,27 +196,56 @@ struct pciSystemDescriptor {
 } __attribute__((__packed__));
 typedef struct pciSystemDescriptor PCIDescriptor;
 
-void PCIScan();
 
-PCIRegisterValue ReadPCIeRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset);
-PCIRegisterValue ReadPCIRegister(__attribute__((unused)) PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset);
-PCIRegisterValue ReadPCI(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func, PCIOffsetSelector offset);
+void PCIScan(uint32_t list_addr);
 
-void WritePCIeRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset,PCIRegisterValue value);
-void WritePCIRegister(__attribute__((unused)) PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset,PCIRegisterValue value);
-void WritePCI(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset,PCIRegisterValue value);
+// Abstracted PCI Subsystem Functions
 
+bool checkPCIeExisting();
 void forcePCIMode();
 void forcePCIeMode();
-
-PCIAddress CalcPCIeAddress(PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset);
-PCIAddress CalcPCIAddress(PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset);
-
 PCIMode queryPCIMode();
 bool isPCIMode();
 bool isPCIeMode();
 
-void PCIenumeration();
+// Basic PCI Functions
+
+PCIRegisterValue ReadPCI(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func, PCIOffsetSelector offset);
+PCIRegisterValue ReadPCIeRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset);
+PCIRegisterValue ReadPCIRegister(__attribute__((unused)) PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset);
+
+PCIAddress CalcPCIeAddress(PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset);
+PCIAddress CalcPCIAddress(PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset);
+
+void WritePCI(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset,PCIRegisterValue value);
+void WritePCIeRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset,PCIRegisterValue value);
+void WritePCIRegister(__attribute__((unused)) PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCIOffsetSelector offset,PCIRegisterValue value);
+
+void PCIenumeration(uint32_t list_addr);
+
+/// Functions for working with PCI Devices
+bool checkPCIDeviceType(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func,PCI_CLASSCODE class_code, PCI_SUBCLASS subclass,PCI_PROGIF progif);
+
+PCI_REVISION_ID getPCIDeviceRevisionID(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+PCI_CLASSCODE getPCIDeviceClassCode(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+PCI_SUBCLASS getPCIDeviceSubClass(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+PCI_PROGIF getPCIDeviceProgIF(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+PCIHeaderType getPCIDeviceHeaderType(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+
+PCIVendor getPCIVendorDevice(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+PCIDeviceID getPCIDeviceID(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+
+PCICommandReg getPCICommandRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+void setPCICommandRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func, PCIRegisterValue value);
+
+bool isPCIDeviceInterruptEnabled(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+void enablePCIDeviceInterrupt(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+void disablePCIDeviceInterrupt(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+
+PCIStatusReg getPCIStatusRegister(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+bool isPCIDevice66MHzCapable(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+bool isPCIDeviceHasCapabilitiesList(PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
+
 
 
 #endif
