@@ -3,7 +3,7 @@
 
 #include "drivers/pci/defs.h"
 
-void PCIScan(uint32_t list_addr);
+void PCIScan(PCIDescriptor* pciDescriptor,uint32_t list_addr);
 
 
 #endif

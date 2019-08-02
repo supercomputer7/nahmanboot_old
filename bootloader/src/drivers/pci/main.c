@@ -5,21 +5,20 @@
 
 PCIDescriptor pciTable;
 
-void PCIScan(uint32_t list_addr)
+void PCIScan(PCIDescriptor* pciDescriptor, uint32_t list_addr)
 {
-    pciTable.mcfg = (ACPIMCFG*)GetACPITablePointer((void*)GetRSDP(), "MCFG");
-    if(pciTable.mcfg == NULL)
-    {
-        forcePCIMode(&pciTable);
-    }
-    else
-    {
-        forcePCIeMode(&pciTable);
-    }
-    uint32_t *ptr = (uint32_t*)0x800;
-    ptr[0] = (uint32_t)&pciTable;
+    PCIDescriptor* tmp;
+    if(pciDescriptor != NULL) { tmp = pciDescriptor; } else { tmp = &pciTable; }
+    
+    tmp->mcfg = (ACPIMCFG*)GetACPITablePointer((void*)GetRSDP(), "MCFG");
 
-    PCIenumeration(list_addr,&pciTable);
+    if(tmp->mcfg == NULL) { forcePCIMode(tmp); } else { forcePCIeMode(tmp); }
+
+    uint32_t *ptr = (uint32_t*)0x800;
+    ptr[0] = (uint32_t)tmp;
+
+    PCIenumeration(list_addr,tmp);
+    
 }
 
 
