@@ -28,9 +28,10 @@ struct PCIBasicHeader {
     uint8_t header_type;
     uint8_t bist;
 };
+typedef struct PCIBasicHeader PCIBasicHeader;
 
 struct PCIHeaderType0 {
-    struct PCIBasicHeader h;
+    PCIBasicHeader h;
 
     uint32_t bar0;
     uint32_t bar1;
@@ -58,7 +59,7 @@ struct PCIHeaderType0 {
 } __attribute__((__packed__));
 
 struct PCIHeaderType1 {
-    struct PCIBasicHeader h;
+    PCIBasicHeader h;
 
     uint32_t bar0;
     uint32_t bar1;
@@ -95,7 +96,7 @@ struct PCIHeaderType1 {
 } __attribute__((__packed__));
 
 struct PCIHeaderType2 {
-    struct PCIBasicHeader h;
+    PCIBasicHeader h;
 
     uint32_t cardbus_socket_base_address;
 
