@@ -43,6 +43,11 @@ set(KERNEL_SOURCE_FILES
         src/drivers/acpi/powermodes.c
 
         src/drivers/pci/main.c
+        src/drivers/pci/pci.c
+        src/drivers/pci/pcie.c
+        src/drivers/pci/general.c
+        src/drivers/pci/enum.c
+        src/drivers/pci/device.c
 
         src/main.c)
 
