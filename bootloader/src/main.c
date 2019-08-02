@@ -16,8 +16,8 @@ void main()
 
     PCIDescriptor pciDesc;
 
-    PCIScan(&pciDesc,0x70000); // Initialize PCI & PCIe
-    
+    PCIScan(&pciDesc,0x70000); // Initialize PCI Descriptor
+
     
 
     // Reset HPET, LAPIC timer & RTC
