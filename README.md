@@ -1,59 +1,18 @@
 # nahmanboot
 
 NahmanBoot is a bootloader intended for x86 PCs (only). Boots from Real Mode to 32 Bit Protected Mode.
-Written in x86 assembly & C (will use C for acpica probably)
+Written in x86 assembly & C.
 
-## Hardware Support (existing or planned):
-* SATA & SATAPI Devices, USB 1,2 Storage Devices, IDE Hard drives & Optical Drives
-* Floppy 1.44 MB Support
-* NVMe Drives Support
-* Basic VGA Capabilities
-* PCI & PCI-Express Support
-* Human Interface Devices: USB HID, PS2 Keyboard & mouse (only if not emulated)
-* Modern hardware: IO-APIC & LAPIC
-* Timing hardware: RTC & HPET
+Check SUPPORT.md for support list (what is planned, what will not be implemented).
 
-## Software Features (existing or planned):
-* Booting Linux/Multiboot2/Multiboot kernels
-* Booting kernels over CD/DVD-ROM/RAM
-* MBR (Partial Support only) & GPT Partition table (Full Support)
-* Parsing FAT12,16,32 & ext2,3,4 & ISO-9660
-* Full ACPI Support: AML parsing & power management (using ACPICA) and static table parsing (without ACPICA)
-* Modification & Configuration capabilities
+## Some thoughts in the right way
+* Assume bare minimum working hardware - During development, any assumptions that can be made in High level programming are not valid here. As this code is interfacing hardware directly, sanity checks are a must. Relying on firmware should be a last resort in general, and code should check for bugs if any piece of firmware code is being used. Even assumption like that the computer has an ACPI BIOS is not valid all the time, so proper checks and careful handling are essential for this project to succeed.
+Another example is when handling storage devices - It is indeed very tempting to assume 512 byte size sector for hard disks and 2048 byte size sector for optical disks. However, this assumption like the previous one could be absolutely wrong. However, one shouldn't assume that this code is fool-proof as it will fail on faulty hardware (e.g. faulty RAM, faulty Motherboard etc.).
+* Code is not perfect - If you read all the goals of the project, you might think to yourself that the code will be organized & coded perfectly. The truth is that it is not. I (the first "contributor") am coding and building this project for many purposes, for example - for fun and for learning about computers. No one is perfect, and because of that, one should not assume that his code (or of someone else) is perfect. Project's code will not use all the advanced methods when interfacing hardware, like super fast DMA transfers, fastest shiny graphics drawing etc. However, one shouldn't mistake to think that the produced code will use ugly hacks and lazy methods - the produced code will use general & reliable methods as much as possible, corresponding to "Assume bare minimum working hardware" principle.
+* Bootmanager and that's it - This project, however fancy and advanced it might be in some point, will remain a Bootmanager, like GRUB. This project is not intended for being an Operating System and if you want to explore OSDev, I highly recommend to go https://wiki.osdev.org (I learned a lot from this website) and check the SerenityOS project at https://github.com/SerenityOS/serenity (which is a very nice project).
+* Advanced Flexibility in Mind - The project will be strive to produce a flexible code so changes can be made with ease.
+* Minimum interference in boot sequence (a.k.a Keep It Simple) - Before transfering the execution to the kernel with appropriate parameters delieverd, the bootloader will try to change back every crirical setting in hardware that has been changed while the bootloader loaded itself and other things.
 
-## Some concepts/features that might be implemented, based on demand:
-* Modules (drivers) insertion during runtime
-* Basic Multitasking (Kernel mode only)
-* Basic Networking hardware support & TCP/IP(v4/v6) Stack
-* Some sort of x86 32 Bit paging mechanism
-* USB 3 Support
-* Basic shell (command line interface) with option for recovery tools (e.g. partition manager)
-* UEFI Support (in other Repository)
-* Booting kernels over Network
-* LVM & Software RAID support
-
-A side note about this section: any feature in this section can be implemented really after the basics are done. 
-If any of the features here are present in the bootloader, that means that I implemented all of them (because they need each other).
-Floppy Support is useful for debugging and testing environment, but not for real machines. When using floppies on real machines,
-the floppy subsystem is very unreliable and will most likely fail to load big files in reasonable time. However, floppies can be used to boot small kernels,
-and also can be used to load modules in runtime. So I'm still not very sure if I want to implement such subsystem. In case I decide to do so, it will be after everything else is written and behaves correctly.
-Booting kernels over network if implemented, will be similiar to PXE network boot (i.e. using dhcp server+tftp to acquire IP address and then download the boot image).
-
-## This bootloader will not use:
-* Obsolete hardware: PIT, PIC, PS/2 (if emulated)
-* BIOS Services after initial setup (stage 1 & 1.5), including BIOS32 & BIOS APM 32 Protected mode services
-* Multi core system or Multithreading system
-* Any sort of advanced multitasking concept
-
-
-### Notes & Explanations why not to implement some features
-* "will not use" = will not support it, but this hardware/concepts/features can be still used by the OS later...
-* MBR Lack of Support: Bootloader will halt if actually found only MBR table. However, protective MBR (a must for GPT table) can be used, and bootloader will warn the user if protective MBR is not found. The reason for lack of support for MBR is that no one really uses this type of partition table, and it is very limiting!
-* Multi core system: Bootloader simply will not enable any other CPU core found in the system since OS will do it
-* Advanced multitasking system: Bootloader does not need to multitask with User mode applications, as it will overcomplicate design...
-* PS/2: If Bootloader detects a USB keyboard & mouse, it will check for USB Legacy Support. In case it found there is such support, it will disable interrupts from the PS/2 bus entirely, effectively disabling for the moment any support of PS/2 (but can be reenabled later by OS code).
-* Any other obsolete hardware - bootloader will simply ignore that hardware, trying to disable it by masking it somehow.
-* Bootloader will use BIOS services to locate e820 map, setup basic fraembuffer (and will list all VBE/VESA modes available) and to load stage 2 (core.bin). After switching to protected mode in stage 1.5 (boot32.bin), no further calls are made to BIOS. Basically, the bootloader will try to avoid usage of firmware capabilities as much as possible, to keep the code portable.
 
 ## Installation
 
@@ -66,6 +25,10 @@ nahmanboot -p /dev/sdXY
 ```
 
 when you need to specify the partition you have created.
+The bootmanager can be installed in 3 main ways:
+* On GPT partitioned Storage, when there is a separate boot partition (most recommended).
+* On MBR partitioned Storage, when there is a separate boot partition.
+* On MBR partitioned Storage, when there is no separate boot partition (not recommended).
 
 ## Usage
 
