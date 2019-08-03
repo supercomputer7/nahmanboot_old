@@ -18,8 +18,18 @@ void PCIenumeration(uint32_t list_addr, PCIDescriptor* pciTable)
 
     for(uint32_t seg=0; seg<seg_entries; ++seg)
     {
-        uint8_t start_bus = ptr->spaces[seg].pci_start_bus;
-        uint8_t end_bus = ptr->spaces[seg].pci_end_bus;
+        uint8_t start_bus;
+        uint8_t end_bus;
+        if(checkPCIeExisting())
+        {
+            start_bus = ptr->spaces[seg].pci_start_bus;
+            end_bus = ptr->spaces[seg].pci_end_bus;
+        }
+        else
+        {
+            start_bus = 0x0;
+            end_bus = 0xFF;
+        }
         for(uint8_t bus=start_bus; bus < end_bus; ++bus)
         {
             for(uint8_t device=0; device < DevicesPerBus; ++device)
