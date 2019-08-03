@@ -23,6 +23,8 @@ set(LIBC_SOURCE_FILES
         lib/libc/string.h
         lib/libc/nahman.h
         lib/libc/nahman.c
+        lib/libc/stdmath.c
+        lib/libc/stdmath.h
 )
 
 set(NAME_INCLUDE "default value" CACHE FILEPATH "description")
@@ -49,9 +51,12 @@ set(KERNEL_SOURCE_FILES
         src/drivers/pci/enum.c
         src/drivers/pci/device.c
 
+        src/drivers/disk/nvme.c
+
         src/main.c)
 
-include_directories("lib/libc")
+set(LIB_DIR lib/libc)
+include_directories(${LIB_DIR})
 set(INCLUDE_DIR include/)
 include_directories (${INCLUDE_DIR})     # .h all inside.
 
