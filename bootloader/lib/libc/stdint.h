@@ -1,3 +1,6 @@
+#ifndef STDINT_H__
+#define STDINT_H__
+
 typedef signed char         int8_t;
 typedef signed short        int16_t;
 typedef signed int          int32_t;
@@ -21,3 +24,5 @@ typedef unsigned long long  uint64_t;
 #define UINT16_MAX          ((uint16_t)65535u)
 #define UINT32_MAX          ((uint32_t)4294967295u)
 #define UINT64_MAX ((uint64_t)18446744073709551615ull)
+
+#endif
