@@ -36,32 +36,46 @@ typedef uint32_t LBA;
 typedef uint16_t SectorAmount;
 typedef uint32_t BufferAddr;
 
-struct BasicStorageHeader {
+struct StorageHeader {
     
-
-
-} __attribute__((__packed__));
-typedef struct BasicStorageHeader BasicStorageHeader;
-
-
-struct StorageDiskDescriptor
-{
     DISK_ID storage_id;
     STORAGE_TYPE storage_type;
     STORAGE_DEVICE_ID storage_device_id; // The number of device. For example, Disk number 2 in the AHCI controller
-    
-    PCIDeviceDescriptor* controller;
 
+};
+typedef struct StorageHeader StorageHeader;
+
+struct StorageOperator {
+    ERRORCODE (*readData)(PCIDescriptor*,STORAGE_DEVICE_ID,LBA,SectorAmount,BufferAddr);
+    ERRORCODE (*writeData)(PCIDescriptor*,STORAGE_DEVICE_ID,LBA,SectorAmount,BufferAddr);
+    ERRORCODE (*readIdentifyData)(PCIDescriptor*,STORAGE_DEVICE_ID,BufferAddr);
+} __attribute__((__packed__));
+typedef struct StorageOperator StorageOperator;
+
+struct StorageStatus {
     bool MechanicalStorage;
     uint16_t rpm_speed;
     uint32_t maximum_lba;
     uint8_t partition_table_type;
+};
+typedef struct StorageStatus StorageStatus;
 
-    ERRORCODE (*readData)(PCIDescriptor*,STORAGE_DEVICE_ID,LBA,SectorAmount,BufferAddr);
-    ERRORCODE (*writeData)(PCIDescriptor*,STORAGE_DEVICE_ID,LBA,SectorAmount,BufferAddr);
-    ERRORCODE (*readIdentifyData)(PCIDescriptor*,STORAGE_DEVICE_ID,BufferAddr);
+struct StorageLock {
+    bool locked;
+    ERRORCODE (*lockDevice)(StorageDescriptor*);
+    ERRORCODE (*unlockDevice)(StorageDescriptor*);
+};
+typedef struct StorageLock StorageLock;
 
-} __attribute__((__packed__));
+struct StorageDiskDescriptor
+{
+    StorageHeader header;
+
+    PCIDeviceDescriptor* controller;
+    
+    StorageStatus status;
+    StorageOperator operator;
+};
 typedef struct StorageDiskDescriptor StorageDiskDescriptor;
 
 
