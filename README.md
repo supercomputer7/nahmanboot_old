@@ -12,10 +12,9 @@ Check SUPPORT.md for support list (what is planned, what will not be implemented
 
 * Bootmanager and that's it - This project, however fancy and advanced it might be in some point, will remain a Bootmanager, like GRUB. This project is not intended for being an Operating System and if you want to explore OSDev, I highly recommend to go https://wiki.osdev.org (I learned a lot from this website) and check the SerenityOS project at https://github.com/SerenityOS/serenity (which is a very nice project).
 
-* Advanced Flexibility in Mind - The project will be strive to produce a flexible code so changes can be made with ease.
+* Advanced Flexibility in Mind - The project will strive to produce a flexible code so changes can be made with ease.
 
 * Minimum interference in boot sequence - Before transfering the execution to the kernel with appropriate parameters delievered, the bootloader will try to change back every crirical setting in hardware that has been changed while the bootloader loaded itself and other things.
-
 
 ## Installation
 
