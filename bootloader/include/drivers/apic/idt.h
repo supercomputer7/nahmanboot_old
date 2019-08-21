@@ -1,3 +1,5 @@
+#ifndef APICIDT_H
+#define APICIDT_H
 #include <stdint.h>
 
 #define DOUBLE_FAULT_VECTOR 0x8
@@ -35,4 +37,5 @@ void install_isrcode(uint32_t *isr_addr,uint32_t *func_addr_ptr);
 void install_interrupt_service(uint32_t *pointer,uint16_t index);
 void remove_interrupt_service(uint16_t index);
 
+#endif
  
