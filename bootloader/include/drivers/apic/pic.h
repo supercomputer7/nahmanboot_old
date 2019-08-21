@@ -22,6 +22,27 @@
 #define ICW4_SFNM	0x10		/* Special fully nested (not) */
 #define PIC_EOI 0x20
 
+#define PIC_TYPE_UNDEFINED 0
+#define PIC_MASTER 1
+#define PIC_SLAVE 2
+#define PIC_IOAPIC 3
+
+typedef struct PIC {
+
+    uint8_t type;
+    uint32_t vector_offset;
+    void* pointer;
+
+    void (*unmaskPIN)(PIC*,uint32_t);
+    void (*maskPIN)(PIC*,uint32_t);
+    void (*disable)(PIC*);
+    void (*enable)(PIC*);
+    void (*sendEOI)(PIC*,uint8_t);
+    uint32_t (*getIRR)(PIC*);
+    uint32_t (*getISR)(PIC*);
+
+} PIC;
+
 void PICremap(uint8_t offset1, uint8_t offset2);
 void disablePIC();
 
