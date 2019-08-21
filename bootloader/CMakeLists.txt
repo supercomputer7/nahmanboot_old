@@ -36,7 +36,6 @@ set(KERNEL_SOURCE_FILES
         src/drivers/apic/main.c
         src/drivers/apic/lapic.c
         src/drivers/apic/pic.c
-        src/drivers/apic/ioapic.c
         src/drivers/apic/idt.c
 
         
