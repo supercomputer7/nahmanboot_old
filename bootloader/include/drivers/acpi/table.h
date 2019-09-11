@@ -5,36 +5,33 @@
 #include <stddef.h>
 #include <stdint.h>
 
-struct __attribute__((__packed__)) acpi_info {
+typedef struct acpi_info {
     void *rsdp;
     void *rsdt;
     void *xsdt;
     uint8_t rsdp_revision;
-};
-typedef struct acpi_info ACPI_INFO;
+} ACPI_INFO;
 
 
-struct RSDPDescriptor {
+typedef volatile struct RSDPDescriptor {
  char Signature[8];
  uint8_t Checksum;
  char OEMID[6];
  uint8_t Revision;
  uint32_t RsdtAddress;
-} __attribute__ ((packed));
-typedef struct RSDPDescriptor RSDPDescriptor;
+} __attribute__ ((packed)) RSDPDescriptor;
 
-struct RSDPDescriptor20 {
+typedef volatile struct RSDPDescriptor20 {
  RSDPDescriptor firstPart;
  
  uint32_t Length;
  uint64_t XsdtAddress;
  uint8_t ExtendedChecksum;
  uint8_t reserved[3];
-} __attribute__ ((packed));
-typedef struct RSDPDescriptor20 RSDPDescriptor20;
+} __attribute__ ((packed)) RSDPDescriptor20;
 
 
-struct __attribute__((__packed__)) ACPISDTHeader {
+typedef volatile struct __attribute__((__packed__)) ACPISDTHeader {
   char Signature[4];
   uint32_t Length;
   uint8_t Revision;
@@ -44,24 +41,64 @@ struct __attribute__((__packed__)) ACPISDTHeader {
   uint32_t OEMRevision;
   uint32_t CreatorID;
   uint32_t CreatorRevision;
-};
-typedef struct ACPISDTHeader ACPITableHeader;
+} ACPITableHeader;
 
-struct RSDT {
+typedef volatile struct RSDT {
   ACPITableHeader h;
   uint32_t PointerToOtherSDT[];
-};
-typedef struct RSDT RSDT;
+} RSDT;
 
-struct XSDT {
+typedef volatile struct XSDT {
   ACPITableHeader h;
   uint64_t PointerToOtherSDT[];
-};
-typedef struct XSDT XSDT;
+} XSDT;
 
 #define PCI_ADDR_SPACE 2
 #define IO_ADDR_SPACE 1
 #define MEMORY_ADDR_SPACE 0
+
+typedef volatile struct MADT_ENTRY {
+  uint8_t type;
+  uint8_t length;
+} __attribute__((__packed__)) MADT_ENTRY;
+
+typedef volatile struct MADT_INT_OVERRIDE {
+  MADT_ENTRY t;
+  uint8_t bus;
+  uint8_t irq;
+  uint32_t gsi;
+  uint16_t flags;
+} __attribute__((__packed__)) MADT_INT_OVERRIDE;
+
+typedef volatile struct MADT_LAPIC_ADDR_OVERRIDE {
+  MADT_ENTRY t;
+  uint16_t reserved;
+  uint32_t addr1;
+  uint32_t addr2;
+} __attribute__((__packed__)) MADT_LAPIC_ADDR_OVERRIDE;
+
+typedef volatile struct MADT_IOAPIC {
+  MADT_ENTRY t;
+  uint8_t id;
+  uint8_t reserved;
+  uint32_t addr;
+  uint32_t gsi_base;
+} __attribute__((__packed__)) MADT_IOAPIC;
+
+typedef volatile struct MADT_LAPIC {
+  MADT_ENTRY t;
+  uint8_t acpi_id;
+  uint8_t apic_id;
+  uint32_t flags;
+} __attribute__((__packed__)) MADT_LAPIC;
+
+typedef volatile struct MADT
+{
+  ACPITableHeader h;
+  uint32_t localapic_baseaddr;
+  uint32_t flags;
+  void* entries;
+} __attribute__((__packed__)) MADT;
 
 struct GenericAddressStructure
 {
@@ -73,7 +110,7 @@ struct GenericAddressStructure
 } __attribute__((__packed__));
 typedef struct GenericAddressStructure GenericAddressStructure;
 
-struct FADT
+typedef volatile struct FADT
 {
     ACPITableHeader h;
     uint32_t FirmwareCtrl;
@@ -139,8 +176,7 @@ struct FADT
     GenericAddressStructure X_PMTimerBlock;
     GenericAddressStructure X_GPE0Block;
     GenericAddressStructure X_GPE1Block;
-} __attribute__((__packed__));
-typedef struct FADT ACPIFADT;
+} __attribute__((__packed__)) ACPIFADT;
 
 struct PCIConfigurationSpaceDescriptor
 {
@@ -152,22 +188,21 @@ struct PCIConfigurationSpaceDescriptor
 } __attribute__((__packed__));
 typedef struct PCIConfigurationSpaceDescriptor PCIeSpaceConfig;
 
-struct MCFG {
+typedef volatile struct MCFG {
   ACPITableHeader h;
   uint8_t Reserved[8];
   PCIeSpaceConfig spaces[];
-} __attribute__((__packed__));
-typedef struct MCFG ACPIMCFG;
+} __attribute__((__packed__)) ACPIMCFG;
 
 void initACPI_INFO();
 void *GetACPI_INFO();
 uint32_t SearchRSDP(uint32_t pointer,uint16_t count);
 uint32_t GetRSDP();
-int GetRSDPRevision(void *rsdp);
-void *GetACPITablePointer(void *rsdp, const char *signature);
+int GetRSDPRevision(RSDPDescriptor *rsdp);
+void *GetACPITablePointer(RSDPDescriptor * rsdp, const char *signature);
 bool ACPI_ValidateRebootSupport(ACPIFADT *fadt);
 bool ACPI_ValidateRSDP(RSDPDescriptor *rsdp);
-uint8_t ACPI_GetTableRevision(void *pointer);
+uint8_t ACPI_GetTableRevision(ACPITableHeader*pointer);
 uint32_t ACPI_GetTableData(void *ptr,uint32_t offset);
 
 #endif

@@ -7,11 +7,11 @@ void rebootACPI()
     void *rsdp = (void*)acpi->rsdp;
     ACPIFADT *fadt = (ACPIFADT*)GetACPITablePointer(rsdp, "FACP"); // find FADT
 
-    if(ACPI_GetTableRevision(fadt) >= 2) // check if FADT revision is 2 or above
+    if(ACPI_GetTableRevision((ACPITableHeader*)fadt) >= 2) // check if FADT revision is 2 or above
     {
         if(ACPI_ValidateRebootSupport(fadt)) // validate ACPI reboot support
         {
-            GenericAddressStructure *resetReg = &fadt->ResetReg;
+            volatile GenericAddressStructure *resetReg = &fadt->ResetReg;
 
             uint8_t value = fadt->ResetValue; //(uint8_t)ACPI_GetTableData(fadt,128);            
             uint32_t addr = resetReg->Address; //ACPI_GetTableData(fadt,120);

@@ -48,14 +48,12 @@ uint32_t SearchRSDP(uint32_t pointer,uint16_t count)
     return 0;
 }
 
-int GetRSDPRevision(void *rsdp)
+int GetRSDPRevision(RSDPDescriptor*rsdp)
 {
-    uint8_t *p = (uint8_t*)rsdp;
-    uint8_t revision = p[15];
-    return (int)revision;
+    return (int)rsdp->Revision;
 }
 
-void *GetACPITablePointer(void *rsdp, const char *signature)
+void *GetACPITablePointer(RSDPDescriptor* rsdp, const char *signature)
 {
     if(GetRSDPRevision(rsdp) == 0)
     {
@@ -100,10 +98,9 @@ uint32_t ACPI_GetTableData(void *ptr,uint32_t offset)
     return pointer[offset/4];
 }
 
-uint8_t ACPI_GetTableRevision(void *pointer)
+uint8_t ACPI_GetTableRevision(ACPITableHeader* pointer)
 {
-    ACPITableHeader *ptr = (ACPITableHeader*)pointer;
-    return ptr->Revision;
+    return pointer->Revision;
 }
 bool ACPI_ValidateRSDP(RSDPDescriptor *rsdp)
 {
