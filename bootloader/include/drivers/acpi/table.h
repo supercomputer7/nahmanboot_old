@@ -12,7 +12,6 @@ typedef struct acpi_info {
     uint8_t rsdp_revision;
 } ACPI_INFO;
 
-
 typedef volatile struct RSDPDescriptor {
  char Signature[8];
  uint8_t Checksum;
@@ -29,7 +28,6 @@ typedef volatile struct RSDPDescriptor20 {
  uint8_t ExtendedChecksum;
  uint8_t reserved[3];
 } __attribute__ ((packed)) RSDPDescriptor20;
-
 
 typedef volatile struct __attribute__((__packed__)) ACPISDTHeader {
   char Signature[4];
@@ -202,7 +200,7 @@ int GetRSDPRevision(RSDPDescriptor *rsdp);
 void *GetACPITablePointer(RSDPDescriptor * rsdp, const char *signature);
 bool ACPI_ValidateRebootSupport(ACPIFADT *fadt);
 bool ACPI_ValidateRSDP(RSDPDescriptor *rsdp);
-uint8_t ACPI_GetTableRevision(ACPITableHeader*pointer);
+uint8_t ACPI_GetTableRevision(ACPITableHeader *pointer);
 uint32_t ACPI_GetTableData(void *ptr,uint32_t offset);
 
 #endif
