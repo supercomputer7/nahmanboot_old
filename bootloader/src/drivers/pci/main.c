@@ -1,7 +1,4 @@
 #include "drivers/pci/main.h"
-#include "drivers/pci/enum.h"
-#include "drivers/pci/pci.h"
-#include "drivers/pci/pcie.h"
 
 PCIDescriptor pciTable;
 
