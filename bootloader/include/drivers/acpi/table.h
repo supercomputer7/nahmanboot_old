@@ -12,7 +12,7 @@ typedef struct acpi_info {
     uint8_t rsdp_revision;
 } ACPI_INFO;
 
-typedef volatile struct RSDPDescriptor {
+typedef struct RSDPDescriptor {
  char Signature[8];
  uint8_t Checksum;
  char OEMID[6];
@@ -20,16 +20,17 @@ typedef volatile struct RSDPDescriptor {
  uint32_t RsdtAddress;
 } __attribute__ ((packed)) RSDPDescriptor;
 
-typedef volatile struct RSDPDescriptor20 {
+typedef struct RSDPDescriptor20 {
  RSDPDescriptor firstPart;
  
  uint32_t Length;
- uint64_t XsdtAddress;
+ uint32_t XsdtAddress1;
+ uint32_t XsdtAddress2;
  uint8_t ExtendedChecksum;
  uint8_t reserved[3];
 } __attribute__ ((packed)) RSDPDescriptor20;
 
-typedef volatile struct __attribute__((__packed__)) ACPISDTHeader {
+typedef struct ACPISDTHeader {
   char Signature[4];
   uint32_t Length;
   uint8_t Revision;
@@ -39,14 +40,14 @@ typedef volatile struct __attribute__((__packed__)) ACPISDTHeader {
   uint32_t OEMRevision;
   uint32_t CreatorID;
   uint32_t CreatorRevision;
-} ACPITableHeader;
+} __attribute__((__packed__)) ACPITableHeader;
 
-typedef volatile struct RSDT {
+typedef struct RSDT {
   ACPITableHeader h;
   uint32_t PointerToOtherSDT[];
 } RSDT;
 
-typedef volatile struct XSDT {
+typedef struct XSDT {
   ACPITableHeader h;
   uint64_t PointerToOtherSDT[];
 } XSDT;

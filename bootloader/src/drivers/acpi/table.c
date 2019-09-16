@@ -72,12 +72,12 @@ void *GetACPITablePointer(RSDPDescriptor* rsdp, const char *signature)
     else
     {
         RSDPDescriptor20 *p = (RSDPDescriptor20*)rsdp; // RSDP Pointers
-        XSDT *xsdt = (XSDT*)(p->XsdtAddress);
+        XSDT *xsdt = (XSDT*)(p->XsdtAddress1);
 
         int entries = (xsdt->h.Length - sizeof(xsdt->h)) / sizeof(uint64_t);
         for (int i = 0; i < entries; i++)
         {
-            ACPITableHeader *h = (ACPITableHeader *) xsdt->PointerToOtherSDT[i];
+            ACPITableHeader *h = (ACPITableHeader *)((uint32_t)xsdt->PointerToOtherSDT[i]);
             if (strncmp(h->Signature, signature, 4))
                 return (void *) h;
         }
