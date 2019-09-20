@@ -17,7 +17,7 @@ PCI_REVISION_ID getPCIDeviceRevisionID(PCIDescriptor* pciTable,PCISegment seg,PC
 }
 PCI_CLASSCODE getPCIDeviceClassCode(PCIDescriptor* pciTable,PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
 {
-    return (PCI_CLASSCODE)((ReadPCI(pciTable,seg,bus,device,func,8) & 0xFF00) >> 2);
+    return (PCI_CLASSCODE)((ReadPCI(pciTable,seg,bus,device,func,8) & 0xFF00) >> 8);
 }
 PCI_SUBCLASS getPCIDeviceSubClass(PCIDescriptor* pciTable,PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
 {
@@ -25,7 +25,7 @@ PCI_SUBCLASS getPCIDeviceSubClass(PCIDescriptor* pciTable,PCISegment seg,PCIBus 
 }
 PCI_PROGIF getPCIDeviceProgIF(PCIDescriptor* pciTable,PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
 {
-    return (PCI_PROGIF)((ReadPCI(pciTable,seg,bus,device,func,10) & 0xFF00) >> 2);
+    return (PCI_PROGIF)((ReadPCI(pciTable,seg,bus,device,func,10) & 0xFF00) >> 8);
 }
 PCIHeaderType getPCIDeviceHeaderType(PCIDescriptor* pciTable,PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func)
 {
