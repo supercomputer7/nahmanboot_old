@@ -3,11 +3,15 @@
 
 #include <stdint.h>
 
+typedef uint8_t COMMANDSET;
+
+
 struct NVMeControllerVersion
 {
     uint8_t tertiary_version_number;
     uint8_t minor_version_number;
     uint16_t major_version_number;
+    
 } __attribute__((__packed__));
 typedef struct NVMeControllerVersion NVMeVersionRegister;
 
@@ -69,5 +73,43 @@ struct NVMeControllerRegisters {
 
 } __attribute__((__packed__));
 typedef struct NVMeControllerRegisters NVMeControllerRegisters;
+
+struct CommandDword {
+    uint8_t opcode;
+    uint8_t commandtype;
+    uint16_t command_identifier;
+} __attribute__((__packed__));
+
+struct SubmissionQueueEntry
+{
+    struct CommandDword cdw0;
+
+    uint32_t namespace_identifier;
+    uint8_t reserved[8];
+
+    uint32_t metadata_pointer1;
+    uint32_t metadata_pointer2;
+
+    uint32_t data_pointer1;
+    uint32_t data_pointer2;
+    uint32_t data_pointer3;
+    uint32_t data_pointer4;
+
+    
+} __attribute__((__packed__));
+typedef struct SubmissionQueueEntry SubmissionQueueEntry;
+
+
+COMMANDSET getNVMeSupportedCommandSet(NVMeControllerRegisters* registers);
+NVMeVersionRegister* getNVMeVersion(NVMeControllerRegisters* registers);
+
+uint16_t getNVMeMajorVersion(NVMeVersionRegister* reg);
+uint8_t getNVMeMinorVersion(NVMeVersionRegister* reg);
+uint8_t getNVMeTertiaryVersion(NVMeVersionRegister* reg);
+
+uint16_t getNVMeMaximumSupportedQueueEntries(NVMeControllerRegisters* registers);
+uint32_t getNVMeDoorbellStride(NVMeControllerRegisters* registers);
+
+
 
 #endif
