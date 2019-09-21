@@ -4,7 +4,7 @@
 void rebootACPI()
 {
     ACPI_INFO *acpi = (void*)GetACPI_INFO(); // find ACPI RSDP
-    void *rsdp = (void*)acpi->rsdp;
+    RSDPDescriptor *rsdp = (RSDPDescriptor*)acpi->rsdp;
     ACPIFADT *fadt = (ACPIFADT*)GetACPITablePointer(rsdp, "FACP"); // find FADT
 
     if(ACPI_GetTableRevision((ACPITableHeader*)fadt) >= 2) // check if FADT revision is 2 or above
