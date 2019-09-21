@@ -33,8 +33,8 @@
 #define ATA_CMD_IDENTIFY_PACKET   0xA1
 #define ATA_CMD_IDENTIFY          0xEC
 
-#define      ATAPI_CMD_READ       0xA8
-#define      ATAPI_CMD_EJECT      0x1B
+#define ATAPI_CMD_READ       0xA8
+#define ATAPI_CMD_EJECT      0x1B
 
 #define ATA_IDENT_DEVICETYPE   0
 #define ATA_IDENT_CYLINDERS    2
@@ -110,12 +110,12 @@ typedef struct ata_identify_data {
     uint16_t obsolete6[53-51]; // word 51-52
     uint16_t features; // word 53
 
-    uint16_t obsolete[59-54]; // word 54-59
+    uint16_t obsolete7[59-54]; // word 54-59
     uint16_t features2; // word 59
 
     uint16_t total_addressable_logical_sectors[2]; // word 60-61
 
-    uint16_t obsolete7; // word 62
+    uint16_t obsolete8; // word 62
     uint16_t multiword_dma_mode; // word 63
 
     uint16_t pio_mode_supported; // word 64
@@ -156,7 +156,7 @@ typedef struct ata_identify_data {
     uint16_t master_password_identifier; // word 92
 
     uint16_t hardware_reset_results; // word 93
-    uint16_t obsolete8; // word 94
+    uint16_t obsolete9; // word 94
 
     uint16_t stream_minimum_request_size; // word 95
     uint16_t streaming_dma_transfer_time; // word 96
@@ -173,7 +173,7 @@ typedef struct ata_identify_data {
     uint16_t world_wide_name[112-108]; // word 108-111
     uint16_t reserved3[116-112]; // word 112-115
 
-    uint16_t obsolete9; // word 116
+    uint16_t obsolete10; // word 116
     uint16_t logical_sector_size[119-117]; // word 117-118
 
     uint16_t features_commands_sets_supported4; // word 119
@@ -181,7 +181,7 @@ typedef struct ata_identify_data {
 
     uint16_t reserved_expanded_supported_enabled_settings[127-121]; // word 121-126
 
-    uint16_t obsolete10; // word 127
+    uint16_t obsolete11; // word 127
     uint16_t security_status; // word 128
 
     uint16_t vendor_specific[160-129]; // word 129-159
@@ -201,10 +201,10 @@ typedef struct ata_identify_data {
     uint16_t write_read_verify_sector_mode3_count[212-210]; // word 210-211
     uint16_t write_read_verify_sector_mode2_count[214-212]; // word 212-213
 
-    uint16_t obsolete11[217-214]; // word 214-216
+    uint16_t obsolete12[217-214]; // word 214-216
     uint16_t nominal_media_rotation_rate; // word 217
     uint16_t reserved7; // word 218
-    uint16_t obsolete12; // word 219
+    uint16_t obsolete13; // word 219
     uint16_t write_read_verify_feature_set_mode; // word 220
     uint16_t reserved13; // word 221
 
