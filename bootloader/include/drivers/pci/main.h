@@ -6,7 +6,7 @@
 #include "drivers/pci/pci.h"
 #include "drivers/pci/pcie.h"
 
-void PCIScan(PCIDescriptor* pciDescriptor,uint32_t list_addr);
-
+void PCIScan(PCIDescriptor* pciDescriptor, PCIDeviceDescriptor* list);
+void PCIScanStorageDevices(PCIDescriptor* pciDescriptor,PCIStorageControllerList* list2);
 
 #endif
