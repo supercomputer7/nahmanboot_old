@@ -33,13 +33,14 @@ typedef struct PIC {
     uint32_t vector_offset;
     void* pointer;
 
-    void (*unmaskPIN)(PIC*,uint32_t);
-    void (*maskPIN)(PIC*,uint32_t);
-    void (*disable)(PIC*);
-    void (*enable)(PIC*);
-    void (*sendEOI)(PIC*,uint8_t);
-    uint32_t (*getIRR)(PIC*);
-    uint32_t (*getISR)(PIC*);
+    void (*unmaskPIN)(struct PIC*,uint32_t);
+    void (*setPIN)(struct PIC*,uint32_t,uint32_t);
+    void (*maskPIN)(struct PIC*,uint32_t);
+    void (*disable)(struct PIC*);
+    void (*enable)(struct PIC*);
+    void (*sendEOI)(struct PIC*,uint8_t);
+    uint32_t (*getIRR)(struct PIC*);
+    uint32_t (*getISR)(struct PIC*);
 
 } PIC;
 
