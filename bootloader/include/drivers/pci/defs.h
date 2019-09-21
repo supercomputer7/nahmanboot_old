@@ -11,6 +11,8 @@
 #define PCIExpressMode 2
 #define PCIconventionalMode 1
 
+#define PCI_MassStroageController 0x1
+
 // Definitions for general use of subsystem
 
 typedef uint16_t PCIMode;
@@ -163,7 +165,7 @@ struct PCIHeaderType2 {
 
 } __attribute__((__packed__));
 
-struct PCIDeviceDescriptor {
+typedef struct PCIDeviceDescriptor {
     uint32_t uniq_id;
     uint16_t flags;
 
@@ -180,20 +182,20 @@ struct PCIDeviceDescriptor {
     PCI_PROGIF progif;
     PCI_REVISION_ID revision;
 
-} __attribute__((__packed__));
-typedef struct PCIDeviceDescriptor PCIDeviceDescriptor;
+} PCIDeviceDescriptor;
 
-
-
-typedef struct pciSystemDescriptor PCIDescriptor;
-struct pciSystemDescriptor {
+typedef struct pciSystemDescriptor {
     ACPIMCFG *mcfg;
     PCIMode pciMethod;
-    PCIRegisterValue (*readPCIreg)(PCIDescriptor*,PCISegment,PCIBus,PCIDevice,PCIFunction,PCIOffsetSelector);
-    void (*writePCIreg)(PCIDescriptor*,PCISegment,PCIBus,PCIDevice,PCIFunction,PCIOffsetSelector,PCIRegisterValue);
+    PCIRegisterValue (*readPCIreg)(struct pciSystemDescriptor*,PCISegment,PCIBus,PCIDevice,PCIFunction,PCIOffsetSelector);
+    void (*writePCIreg)(struct pciSystemDescriptor*,PCISegment,PCIBus,PCIDevice,PCIFunction,PCIOffsetSelector,PCIRegisterValue);
     uint32_t pci_devices_count;
-    PCIDeviceDescriptor *devices;
-} __attribute__((__packed__));
+    PCIDeviceDescriptor* devices;
+} PCIDescriptor;
 
+typedef struct PCIStorageControllerList {
+    uint32_t count;
+    PCIDeviceDescriptor* devices[];
+} PCIStorageControllerList;
 
 #endif
