@@ -12,6 +12,8 @@
 
 #include "drivers/disk/ata.h"
 
+#include "drivers/disk/defs.h"
+
 
 #define	SATA_SIG_ATA	0x00000101	// SATA drive
 #define	SATA_SIG_ATAPI	0xEB140101	// SATAPI drive
@@ -311,9 +313,11 @@ uint8_t checkAHCI_PORT_SPEED(HBA_MEM* pointer,HBA_PORT *port);
 int checkAHCI_PORT_FREESLOT(HBA_PORT *port);
 AHCI_REPORT_INFO* identifyAHCI_Device(HBA_PORT *port, void *buf);
 AHCI_REPORT_INFO* readAHCI_Sectors(HBA_PORT *port, uint32_t basel_sector,uint32_t baseh_sector, uint32_t count, void *buf);
-AHCI_REPORT_INFO* writeAHCI_Sectors(HBA_PORT *port, uint32_t base_sector, uint32_t count, void *buf);
 void resetAHCI_HBA(HBA_MEM* pointer);
 void resetAHCI_PORT(HBA_MEM* pointer);
 void resetAHCI_SOFTWARE(HBA_MEM* pointer);
+
+ERRORCODE ReadAHCI_Sectors(PCIDescriptor* pciDesc,StorageDiskDescriptor* disk,LBA lba1,LBA lba2,SectorAmount amount,BufferAddr buf);
+ERRORCODE ReadAHCI_Identification(PCIDescriptor* pciDesc,StorageDiskDescriptor* disk,BufferAddr buf);
 
 #endif
