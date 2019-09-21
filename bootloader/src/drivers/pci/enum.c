@@ -2,7 +2,7 @@
 #include "drivers/pci/device.h"
 #include "drivers/pci/pcie.h"
 
-void PCIenumeration(uint32_t list_addr, PCIDescriptor* pciTable)
+void PCIenumeration(PCIDeviceDescriptor* list_addr, PCIDescriptor* pciTable)
 {
     pciTable->devices = (PCIDeviceDescriptor*)(list_addr);
     pciTable->devices[0].uniq_id = 1;
