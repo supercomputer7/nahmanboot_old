@@ -52,6 +52,7 @@ set(KERNEL_SOURCE_FILES
 
         src/drivers/disk/nvme.c
         src/drivers/disk/ahci.c
+        src/drivers/disk/ide.c
 
         src/main.c)
 
