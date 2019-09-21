@@ -48,7 +48,7 @@ uint32_t SearchRSDP(uint32_t pointer,uint16_t count)
     return 0;
 }
 
-int GetRSDPRevision(RSDPDescriptor*rsdp)
+int GetRSDPRevision(RSDPDescriptor* rsdp)
 {
     return (int)rsdp->Revision;
 }
@@ -58,13 +58,13 @@ void *GetACPITablePointer(RSDPDescriptor* rsdp, const char *signature)
     if(GetRSDPRevision(rsdp) == 0)
     {
         RSDPDescriptor *p = (RSDPDescriptor*)rsdp; // RSDP Pointer
-        RSDT *rsdt = (RSDT*)p->RsdtAddress;
+        RSDT* rsdt = (RSDT*)p->RsdtAddress;
 
         int entries = (rsdt->h.Length - sizeof(rsdt->h)) / sizeof(uint32_t);
  
         for (int i = 0; i < entries; i++)
         {
-            ACPITableHeader *h = (ACPITableHeader *) rsdt->PointerToOtherSDT[i];
+            ACPITableHeader* h = (ACPITableHeader *) rsdt->PointerToOtherSDT[i];
             if (strncmp(h->Signature, signature, 4))
                 return (void *) h;
         }
