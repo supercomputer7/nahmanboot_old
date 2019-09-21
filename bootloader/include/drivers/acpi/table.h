@@ -45,12 +45,12 @@ typedef struct ACPISDTHeader {
 typedef struct RSDT {
   ACPITableHeader h;
   uint32_t PointerToOtherSDT[];
-} RSDT;
+} __attribute__((__packed__)) RSDT;
 
 typedef struct XSDT {
   ACPITableHeader h;
   uint64_t PointerToOtherSDT[];
-} XSDT;
+} __attribute__((__packed__)) XSDT;
 
 #define PCI_ADDR_SPACE 2
 #define IO_ADDR_SPACE 1
