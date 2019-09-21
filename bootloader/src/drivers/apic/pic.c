@@ -3,9 +3,6 @@
 #include <stdint.h>
 #include "drivers/io/ioport.h"
 
-
-
-
 void PICremap(uint8_t offset1, uint8_t offset2)
 {
 	 uint8_t a1, a2;
