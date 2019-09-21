@@ -1,3 +1,6 @@
+#ifndef IOPORT_H
+#define IOPORT_H
+
 #include <stdint.h>
 static inline void outb(uint16_t port, uint8_t val)
 {
@@ -39,3 +42,5 @@ static inline uint32_t inl(uint16_t port)
                    : "Nd"(port) );
     return ret;
 }
+
+#endif
