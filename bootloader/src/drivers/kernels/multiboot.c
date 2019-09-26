@@ -1,5 +1,15 @@
 #include "drivers/kernels/multiboot.h"
 
+bool multiboot_detect(uint32_t* buf)
+{
+    for(int i=0; i<2048;++i) // 8192 bytes / sizeof(uint32_t)
+    {
+        if(buf[i] == MULTIBOOT_HEADER_MAGIC)
+            return true;
+    }
+    return false;
+}
+
 void multiboot_load(multiboot_info_t* ptr,char* commandline,e820map_entry_t* mmap,uint32_t mmap_size, char* bootloader_name)
 {
     ptr->cmdline = (uint32_t)commandline;

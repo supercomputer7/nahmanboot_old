@@ -2,6 +2,7 @@
 #define MULTIBOOT_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 // How many bytes from the start of the file we search for the header.
 #define MULTIBOOT_SEARCH                        8192
@@ -245,6 +246,7 @@ struct multiboot_apm_info
   uint16_t dseg_len;
 };
 
+bool multiboot_detect(uint32_t* buf);
 void multiboot_load(multiboot_info_t* ptr,char* commandline,e820map_entry_t* mmap,uint32_t mmap_size, char* bootloader_name);
 void multiboot_loadelf(multiboot_info_t* ptr,Elf32MainHeader* main_header);
 void multiboot_jump(multiboot_info_t* ptr,uint32_t entry_point);
