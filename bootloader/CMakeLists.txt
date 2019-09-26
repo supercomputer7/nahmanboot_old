@@ -54,6 +54,9 @@ set(KERNEL_SOURCE_FILES
         src/drivers/disk/ahci.c
         src/drivers/disk/ide.c
 
+        src/drivers/kernels/multiboot.c
+        src/drivers/kernels/elf.c
+
         src/main.c)
 
 set(LIB_DIR lib/libc)
