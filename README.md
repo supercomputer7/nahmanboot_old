@@ -49,7 +49,7 @@ Userspace utilities will be provided for major platforms (including source code,
 
 Note: In order to compile the bootloader code, you must have a GCC Cross compiler. Do not try to bypass it by rewriting the cmake file as it will only bring problems obviously.
 
-A video uploaded by me to YouTube, showing NahmanOS bootloader booting SerenityOS:
+A video uploaded by me to YouTube, showing NahmanOS bootloader booting SerenityOS:  
 https://www.youtube.com/watch?v=MtyUKLpjnS8
 
 ## License
