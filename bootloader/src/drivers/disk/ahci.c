@@ -9,7 +9,9 @@ HBA_MEM* getAHCI_HBA(PCIDescriptor* pciDescriptor,PCISegment seg,PCIBus bus,PCID
 HBA_PORT* getAHCI_PORT(HBA_MEM* pointer,uint8_t port)
 {
     if(port > MAXIMUM_SATA_PORTS)
-        return NULL;
+	{
+		return NULL;
+	}
 	return &pointer->ports[port];
 }
 bool isAHCI_BIOS_OS_HANDOFF_SUPPORTED(HBA_MEM* pointer)
@@ -92,6 +94,8 @@ uint8_t checkAHCI_PORT_SPEED(HBA_MEM* pointer,HBA_PORT *port)
                     return SATA2_SPEED;
                 case 3:
                     return SATA2_SPEED;
+				default:
+					return SATA1_SPEED;
             }
         case 3:
             switch(sctl)
@@ -104,8 +108,12 @@ uint8_t checkAHCI_PORT_SPEED(HBA_MEM* pointer,HBA_PORT *port)
                     return SATA2_SPEED;
                 case 3:
                     return SATA3_SPEED;
-            }
+				default:
+					return SATA1_SPEED;
 
+            }
+		default:
+			return SATA1_SPEED;
     }
 }
 int checkAHCI_PORT_FREESLOT(HBA_PORT *port)
@@ -201,10 +209,6 @@ AHCI_REPORT_INFO* readAHCI_Sectors(HBA_PORT *port, uint32_t basel_sector,uint32_
 		return NULL;
 	}
 	return NULL;
-}
-AHCI_REPORT_INFO* writeAHCI_Sectors(HBA_PORT *port, uint32_t base_sector, uint32_t count, void *buf)
-{
-    return NULL;
 }
 void resetAHCI_HBA(HBA_MEM* pointer)
 {
