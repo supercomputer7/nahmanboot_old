@@ -14,8 +14,28 @@ jmp check_a20line_main
 detect_memory_map:
 pusha
 
+push eax
+push ecx
+push ebx
 xor eax,eax
-mov ax,0x1000
+mov ax,0x70
+mov es,ax
+xor ebx,ebx
+
+	mov ecx, 70
+	.loop_clean:
+
+		mov byte [es:bx], 0
+		inc bx
+	loop .loop_clean
+
+pop ebx
+pop ecx
+pop eax
+
+
+xor eax,eax
+mov ax,0x70
 mov es,ax
 
 	xor di,di
@@ -225,6 +245,16 @@ stage4_framebuffer:
 	int 0x10
 
 	;; get frame buffer address
+
+	;mov ax, 0x4F02	; set VBE mode
+	;mov bx, 0x4118	; VBE mode number; notice that bits 0-13 contain the mode number and bit 14 (LFB) is set and bit 15 (DM) is clear.
+	;mov bx,0x4138
+	;int 0x10			; call VBE BIOS
+	;cmp ax, 0x004F	; test for error
+
+	;error:
+	;	jne error
+
 cli
 
 
