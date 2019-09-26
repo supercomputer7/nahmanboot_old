@@ -184,6 +184,10 @@ void ReadIDE_Drive(uint16_t port,bool slave, uint32_t lba_low ,uint16_t* buf,uin
                 {
                     input = inb(port + ATA_REG_STATUS);
                 }
+                for(int k=0; k<3; ++k)
+                {
+                    ide_400ns_delay(port);
+                }
             }
         }
     }
