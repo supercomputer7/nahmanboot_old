@@ -1,6 +1,6 @@
-# nahmanboot
+# nahmanboot - NahmanOS Bootloader
 
-NahmanBoot is a bootloader intended for x86 PCs (only). Boots from Real Mode to 32 Bit Protected Mode.
+NahmanBoot is a bootloader intended for x86 PCs (only). Booting from Real Mode to 32 Bit Protected Mode.
 Written in x86 assembly & C.
 
 Check SUPPORT.md for support list (what is planned, what will not be implemented).
