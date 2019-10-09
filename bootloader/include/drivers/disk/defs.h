@@ -8,10 +8,10 @@
 
 #define UndefinedStorageDevice 0
 #define IDE_StorageDevice 1
-#define AHCI_StorageDevice 2
-#define NVMe_StorageDevice 3
-#define USB_StorageDevice 4
-#define Floopy_StorageDevice 5
+#define AHCI_StorageDevice 6
+#define NVMe_StorageDevice 8
+#define USB_StorageDevice 10
+#define Floopy_StorageDevice 70
 
 #define NoPartitonTableDisk 0
 #define GPTDisk 1
@@ -36,53 +36,42 @@ typedef uint32_t LBA;
 typedef uint16_t SectorAmount;
 typedef uint32_t BufferAddr;
 
-struct StorageHeader {
-    
+typedef struct StorageHeader {
+    PCIDeviceDescriptor* controller;
     DISK_ID storage_id;
     STORAGE_TYPE storage_type;
     STORAGE_DEVICE_ID storage_device_id; // The number of device. For example, Disk number 2 in the AHCI controller
 
-};
-typedef struct StorageHeader StorageHeader;
+} StorageHeader;
 
-struct StorageOperator {
-    ERRORCODE (*readData)(PCIDescriptor*,STORAGE_DEVICE_ID,LBA,SectorAmount,BufferAddr);
-    ERRORCODE (*writeData)(PCIDescriptor*,STORAGE_DEVICE_ID,LBA,SectorAmount,BufferAddr);
-    ERRORCODE (*readIdentifyData)(PCIDescriptor*,STORAGE_DEVICE_ID,BufferAddr);
-} __attribute__((__packed__));
-typedef struct StorageOperator StorageOperator;
+typedef struct StorageDiskDescriptor StorageDiskDescriptor;
 
-struct StorageStatus {
+typedef struct StorageOperator {
+    ERRORCODE (*readData)(PCIDescriptor*,StorageDiskDescriptor*,LBA,LBA,SectorAmount,BufferAddr);
+    ERRORCODE (*writeData)(PCIDescriptor*,StorageDiskDescriptor*,LBA,LBA,SectorAmount,BufferAddr);
+    ERRORCODE (*readIdentifyData)(PCIDescriptor*,StorageDiskDescriptor*,BufferAddr);
+} StorageOperator;
+
+typedef struct StorageStatus {
     bool MechanicalStorage;
     uint16_t rpm_speed;
     uint32_t maximum_lba;
     uint8_t partition_table_type;
-};
-typedef struct StorageStatus StorageStatus;
+} StorageStatus;
 
-struct StorageLock {
+typedef struct StorageLock {
     bool locked;
-    ERRORCODE (*lockDevice)(StorageDescriptor*);
-    ERRORCODE (*unlockDevice)(StorageDescriptor*);
-};
-typedef struct StorageLock StorageLock;
+    //ERRORCODE (*lockDevice)(StorageDescriptor*);
+    //ERRORCODE (*unlockDevice)(StorageDescriptor*);
+} StorageLock;
+
 
 struct StorageDiskDescriptor
 {
     StorageHeader header;
-
     PCIDeviceDescriptor* controller;
-    
     StorageStatus status;
     StorageOperator operator;
 };
-typedef struct StorageDiskDescriptor StorageDiskDescriptor;
-
-
-
-typedef struct StorageSubystemDescriptor StorageDescriptor;
-struct StorageSubystemDescriptor {
-    
-} __attribute__((__packed__));
 
 #endif
