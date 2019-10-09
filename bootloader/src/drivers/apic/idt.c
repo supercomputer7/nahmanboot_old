@@ -8,7 +8,7 @@ void create_idt()
 }
 void blank_idt()
 {
-    IDTDescriptor *descriptors = (IDTDescriptor*)0x20000;
+    IDTDescriptor *descriptors = (IDTDescriptor*)0x7000;
     for(int i=0; i< 256;++i)
     {
         descriptors[i].offset_1 = 0;
