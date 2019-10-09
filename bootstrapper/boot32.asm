@@ -341,7 +341,7 @@ hlt ; hopefully we never reach this opcode
 
 IDT:
 dw 256*8-1
-dd 0x20000
+dd 0x7000;
 
 
 
