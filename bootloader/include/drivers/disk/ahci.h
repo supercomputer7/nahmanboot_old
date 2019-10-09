@@ -300,6 +300,9 @@ typedef struct tagHBA_CMD_TBL
 	HBA_PRDT_ENTRY	prdt_entry[1];	// Physical region descriptor table entries, 0 ~ 65535
 } __attribute__((__packed__)) HBA_CMD_TBL;
 
+ERRORCODE read_ahci_sectors(PCIDescriptor* pciDesc,StorageDiskDescriptor* disk,LBA lba1,LBA lba2,SectorAmount amount,BufferAddr buf);
+ERRORCODE read_ahci_identification(PCIDescriptor* pciDesc,StorageDiskDescriptor* disk,BufferAddr buf);
+
 HBA_MEM* getAHCI_HBA(PCIDescriptor* pciDescriptor,PCISegment seg,PCIBus bus,PCIDevice device,PCIFunction func);
 HBA_PORT* getAHCI_PORT(HBA_MEM* pointer,uint8_t port);
 bool isAHCI_BIOS_OS_HANDOFF_SUPPORTED(HBA_MEM* pointer);
@@ -316,8 +319,4 @@ AHCI_REPORT_INFO* readAHCI_Sectors(HBA_PORT *port, uint32_t basel_sector,uint32_
 void resetAHCI_HBA(HBA_MEM* pointer);
 void resetAHCI_PORT(HBA_MEM* pointer);
 void resetAHCI_SOFTWARE(HBA_MEM* pointer);
-
-ERRORCODE ReadAHCI_Sectors(PCIDescriptor* pciDesc,StorageDiskDescriptor* disk,LBA lba1,LBA lba2,SectorAmount amount,BufferAddr buf);
-ERRORCODE ReadAHCI_Identification(PCIDescriptor* pciDesc,StorageDiskDescriptor* disk,BufferAddr buf);
-
 #endif
