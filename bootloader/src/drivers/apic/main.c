@@ -4,7 +4,7 @@ void disable_interrupts()
 {
     asm("cli");
     disablePIC();
-    disableLAPIC();
+    //disableLAPIC();
     asm("sti");
 }
 void disable_interrupts_temporarily()
