@@ -1,6 +1,6 @@
-# nahmanboot
+# nahmanboot - NahmanOS Bootloader
 
-NahmanBoot is a bootloader intended for x86 PCs (only). Boots from Real Mode to 32 Bit Protected Mode.
+NahmanBoot is a bootloader intended for x86 PCs (only). Booting from Real Mode to 32 Bit Protected Mode.
 Written in x86 assembly & C.
 
 Check SUPPORT.md for support list (what is planned, what will not be implemented).
@@ -49,7 +49,7 @@ Userspace utilities will be provided for major platforms (including source code,
 
 Note: In order to compile the bootloader code, you must have a GCC Cross compiler. Do not try to bypass it by rewriting the cmake file as it will only bring problems obviously.
 
-A video uploaded by me to YouTube, showing NahmanOS bootloader booting SerenityOS:
+A video uploaded by me to YouTube, showing NahmanOS bootloader booting SerenityOS:  
 https://www.youtube.com/watch?v=MtyUKLpjnS8
 
 ## License
