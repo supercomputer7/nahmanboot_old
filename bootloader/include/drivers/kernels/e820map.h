@@ -3,6 +3,11 @@
 
 #include <stdint.h>
 
+typedef struct e820map {
+    uint32_t map_addr;
+    uint32_t entries_count;
+} e820map;
+
 typedef struct e820map_entry {
     uint32_t base_addr1;
     uint32_t base_addr2;
