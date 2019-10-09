@@ -53,9 +53,17 @@ set(KERNEL_SOURCE_FILES
         src/drivers/disk/nvme.c
         src/drivers/disk/ahci.c
         src/drivers/disk/ide.c
+        src/drivers/disk/main.c
+
+        src/drivers/fs/parition.c
+        src/drivers/fs/ext2.c
+        src/drivers/fs/gpt.c
+        src/drivers/fs/mbr.c
 
         src/drivers/kernels/multiboot.c
         src/drivers/kernels/elf.c
+
+        src/memory/bump_alloc.c
 
         src/main.c)
 
