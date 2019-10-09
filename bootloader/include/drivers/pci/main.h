@@ -6,7 +6,9 @@
 #include "drivers/pci/pci.h"
 #include "drivers/pci/pcie.h"
 
-void PCIScan(PCIDescriptor* pciDescriptor, PCIDeviceDescriptor* list);
-void PCIScanStorageDevices(PCIDescriptor* pciDescriptor,PCIStorageControllerList* list2);
+#include "memory/bump_alloc.h"
+
+PCIDeviceDescriptor* PCIScan(PCIDescriptor* pciDescriptor, BumpAllocator* bump_allocator);
+PCIStorageControllerList* PCIScanStorageDevices(PCIDescriptor* pciDescriptor,BumpAllocator* bump_allocator);
 
 #endif

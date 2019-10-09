@@ -2,6 +2,8 @@
 #define PCIENUM_H
 
 #include "drivers/pci/defs.h"
-void PCIenumeration(PCIDeviceDescriptor* list_addr, PCIDescriptor* pciTable);
+#include "memory/bump_alloc.h"
+
+void PCIenumeration(PCIDeviceDescriptor* list_addr, PCIDescriptor* pciTable,BumpAllocator* bump_allocator);
 
 #endif

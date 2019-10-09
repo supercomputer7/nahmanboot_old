@@ -2,7 +2,7 @@
 #include "drivers/pci/device.h"
 #include "drivers/pci/pcie.h"
 
-void PCIenumeration(PCIDeviceDescriptor* list_addr, PCIDescriptor* pciTable)
+void PCIenumeration(PCIDeviceDescriptor* list_addr, PCIDescriptor* pciTable,BumpAllocator* bump_allocator)
 {
     pciTable->devices = (PCIDeviceDescriptor*)(list_addr);
     pciTable->devices[0].uniq_id = 1;
@@ -38,6 +38,7 @@ void PCIenumeration(PCIDeviceDescriptor* list_addr, PCIDescriptor* pciTable)
                 {
                     if(getPCIVendorDevice(pciTable,seg,bus,device,func) != 0xffff && getPCIDeviceID(pciTable,seg,bus,device,func) != 0xffff)
                     {
+                        bump_allocator->allocate(bump_allocator,sizeof(PCIDeviceDescriptor));
                         pciTable->devices[count_devices].uniq_id = count_devices;
 
                         pciTable->devices[count_devices].segment = seg;

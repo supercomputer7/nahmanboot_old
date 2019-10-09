@@ -1,36 +1,31 @@
 #include "drivers/pci/main.h"
 
-PCIDescriptor pciTable;
-
-void PCIScan(PCIDescriptor* pciDescriptor, PCIDeviceDescriptor* list)
+PCIDeviceDescriptor* PCIScan(PCIDescriptor* pciDescriptor,BumpAllocator* bump_allocator)
 {
-    PCIDescriptor* tmp;
-    if(pciDescriptor != NULL) { tmp = pciDescriptor; } else { tmp = &pciTable; }
-    
-    tmp->mcfg = (ACPIMCFG*)GetACPITablePointer((void*)GetRSDP(), "MCFG");
-
-    if(tmp->mcfg == NULL) { forcePCIMode(tmp); } else { forcePCIeMode(tmp); }
-
-    uint32_t *ptr = (uint32_t*)0x800;
-    ptr[0] = (uint32_t)tmp;
-
-    PCIenumeration(list,tmp);
+    PCIDeviceDescriptor* list = (PCIDeviceDescriptor*)bump_allocator->allocate(bump_allocator,sizeof(PCIDeviceDescriptor));
+    pciDescriptor->mcfg = (ACPIMCFG*)GetACPITablePointer((void*)GetRSDP(), "MCFG");
+    if(pciDescriptor->mcfg == NULL) { forcePCIMode(pciDescriptor); } else { forcePCIeMode(pciDescriptor); }
+    PCIenumeration(list,pciDescriptor,bump_allocator);
+    return list;
 }
-void PCIScanStorageDevices(PCIDescriptor* pciDescriptor,PCIStorageControllerList* list2)
+PCIStorageControllerList* PCIScanStorageDevices(PCIDescriptor* pciDescriptor,BumpAllocator* bump_allocator)
 {
-    int j=0;
-    
-    for(int i=0; i<pciDescriptor->pci_devices_count; ++i)
+
+    PCIStorageControllerList* list2 = (PCIStorageControllerList*)bump_allocator->allocate(bump_allocator,sizeof(PCIStorageControllerList));
+
+    int device_count=0;
+    for(int i=0; i < (int)pciDescriptor->pci_devices_count; ++i)
     {
         if(pciDescriptor->devices[i].class_code == PCI_MassStroageController)
         {
-            list2->devices[j] = &pciDescriptor->devices[i];
-            ++j;
+            bump_allocator->allocate(bump_allocator,sizeof(PCIDeviceDescriptor*));
+            list2->devices[device_count] = &pciDescriptor->devices[i];
+            ++device_count;
         }     
     }
     
-    list2->count = j;
-    
+    list2->count = device_count;
+    return list2;
 }
 
 
